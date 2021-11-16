@@ -11,13 +11,13 @@ struct RecipeFeaturedView: View {
     
     @EnvironmentObject var model:RecipeModel
     @State var isDetailedViewShow = false
-    
+    @State var tabSelectionIndex = 0
     
     var body: some View {
         VStack(alignment: .leading) {
             Text("Featured Recipes").fontWeight(.bold).font(.largeTitle).padding(.leading).padding(.top, 40)
             GeometryReader { geo in
-                TabView {
+                TabView (selection: $tabSelectionIndex){
                     ForEach (0..<model.recipes.count) {
                         index in
                         if model.recipes[index].featured == true {
@@ -37,11 +37,12 @@ struct RecipeFeaturedView: View {
                                 }
                                 
                                 
-                            }).sheet(isPresented: $isDetailedViewShow) {
+                            }).tag(index)
+                                .sheet(isPresented: $isDetailedViewShow) {
                                 RecipeDetailView(recipe: model.recipes[index])
                             }
                                 .buttonStyle(PlainButtonStyle())
-                                .frame(width: geo.size.width - 40, height: geo.size.height - 100).cornerRadius(10).shadow(color:.black, radius: 10, x:-5, y:5)
+                                .frame(width: geo.size.width - 40, height: geo.size.height - 100).cornerRadius(10).shadow(color:.black, radius: 10)
                         }
                     }
                 }.tabViewStyle(PageTabViewStyle(indexDisplayMode: .automatic))
@@ -49,8 +50,8 @@ struct RecipeFeaturedView: View {
             }
             
             VStack(alignment: .leading, spacing: 10) {
-                Text("Country:").font(.headline)
-                Text("Peru")
+                Text("Preptime: ").font(.headline)
+                Text(model.recipes[tabSelectionIndex].prepTime)
                 Text("Preference Food:").font(.headline)
                 Text("Grass")
             }.padding(.leading)
@@ -59,6 +60,8 @@ struct RecipeFeaturedView: View {
         }
         
     }
+    
+    
 }
 
 struct RecipeFeaturedView_Previews: PreviewProvider {
